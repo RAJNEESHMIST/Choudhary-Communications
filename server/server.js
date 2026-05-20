@@ -27,11 +27,13 @@ const port = process.env.PORT || 5000;
 const useFallback = process.env.FALLBACK_DB === 'true';
 const mongoUri = useFallback ? '' : process.env.MONGODB_URI;
 
-async function startServer() {
+async function configureServer() {
   if (mongoUri) {
     try {
       await connectDb(mongoUri);
-      app.listen(port, () => console.log(`API running on port ${port}`));
+      if (!process.env.VERCEL) {
+        app.listen(port, () => console.log(`API running on port ${port}`));
+      }
     } catch (error) {
       console.error('Database connection failed:', error.message);
       console.error('If Atlas IP whitelist is enabled, verify your MONGODB_URI and network access.');
@@ -44,8 +46,12 @@ async function startServer() {
       console.warn('MONGODB_URI not configured. Starting server with in-memory fallback data.');
     }
 
-    app.listen(port, () => console.log(`API running on port ${port} (fallback mode)`));
+    if (!process.env.VERCEL) {
+      app.listen(port, () => console.log(`API running on port ${port} (fallback mode)`));
+    }
   }
 }
 
-startServer();
+configureServer();
+
+export default app;
