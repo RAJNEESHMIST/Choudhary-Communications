@@ -1,0 +1,8 @@
+{
+  "name": "choudhary-communications",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}
